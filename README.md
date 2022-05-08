@@ -213,7 +213,8 @@ There are two steps:
 
 1. Edit this README file to contain the RUM query you created above right here:
     ```
-    CREATE INDEX ...
+    CREATE INDEX metahtml_title_rum_idx ON metahtml USING rum(title);
+    CREATE INDEX metahtml_content_rum_idx ON metahtml USING rum(content);
     ```
 
 1. Edit this README file with the results of the following queries in psql.
@@ -222,23 +223,139 @@ There are two steps:
     1. This query shows the total number of webpages loaded:
        ```
        select count(*) from metahtml;
+       count
+       --------
+       326456
+       (1 row)
        ```
 
     1. This query shows the number of webpages loaded / hour:
        ```
        select * from metahtml_rollup_insert order by insert_hour desc limit 100;
+       select * from metahtml_rollup_insert order by insert_hour desc limit 100;
+       hll_count |  url   | hostpathquery | hostpath | host  |      insert_hour
+       -----------+--------+---------------+----------+-------+------------------------
+                3 | 187348 |        193001 |   167333 | 64476 | 2022-05-08 06:00:00+00
+                1 |    587 |           596 |      535 |   338 | 2022-05-08 05:00:00+00
+                2 |   6909 |          7143 |     7108 |  4891 | 2022-05-06 22:00:00+00
+                3 | 120964 |        119866 |   116170 | 92288 | 2022-05-06 21:00:00+00
+                1 |   5719 |          5637 |     5468 |  4764 | 2022-05-06 20:00:00+00
+       (5 rows)
        ```
 
     1. This query shows the hostnames that you have downloaded the most webpages from:
        ```
-       select * from metahtml_rollup_host order by hostpath desc limit 100;
+       select * from metahtml_rollup_host2 order by hostpath desc limit 100;
+url | hostpathquery | hostpath |            host
+-----+---------------+----------+----------------------------
+ 142 |           142 |      142 | com,agoda)
+ 123 |           123 |      123 | com,popsugar)
+ 116 |           116 |      116 | ru,tripadvisor)
+ 143 |           143 |      110 | com,mlb)
+  99 |            99 |       99 | kr,co,tripadvisor)
+  98 |            98 |       98 | com,zappos)
+  98 |            98 |       98 | com,pandora)
+  95 |            95 |       95 | com,tripadvisor)
+  94 |            94 |       94 | com,cymax)
+  93 |            93 |       93 | nl,tripadvisor)
+  92 |            92 |       92 | org,wikipedia,en)
+  91 |            91 |       91 | ar,com,tripadvisor)
+  89 |            89 |       89 | org,worldcat)
+  86 |            86 |       86 | org,metoperashop)
+  93 |            93 |       84 | com,dpreview)
+  82 |            82 |       81 | com,bigstockphoto)
+  81 |            81 |       81 | com,society6)
+  81 |            81 |       81 | cl,tripadvisor)
+  80 |            80 |       80 | edu,cornell,law)
+  79 |            79 |       79 | com,gamefaqs)
+  79 |            79 |       79 | com,stocktwits)
+  78 |            78 |       78 | tr,com,tripadvisor)
+  78 |            78 |       78 | com,betterworldbooks)
+  77 |            77 |       77 | tw,com,tripadvisor)
+  77 |            77 |       77 | com,ebaumsworld)
+  75 |            75 |       75 | com,mcmelectronics)
+  82 |            82 |       75 | com,go,espn)
+  74 |            74 |       74 | com,packersproshop)
+  91 |            91 |       72 | com,snagajob)
+  72 |            72 |       72 | com,fanatics)
+  72 |            72 |       72 | br,com,tripadvisor)
+  72 |            72 |       72 | com,theguardian)
+  77 |            77 |       71 | com,edmunds)
+  71 |            71 |       71 | org,wikipedia,es)
+  72 |            72 |       71 | com,yardbarker,network)
+  95 |            95 |       70 | com,starwoodhotels)
+  72 |            72 |       68 | gov,clinicaltrials)
+  68 |            68 |       68 | com,tripadvisor,no)
+  68 |            68 |       68 | com,slowfood)
+  81 |            81 |       68 | com,beeradvocate)
+  92 |            92 |       68 | com,cnet)
+  71 |            71 |       67 | net,sourceforge)
+ 104 |           104 |       67 | com,indeed)
+  67 |            67 |       67 | com,grouprecipes)
+  67 |            67 |       67 | com,6pm)
+  66 |            66 |       66 | com,upi)
+  66 |            66 |       66 | com,merriam-webster)
+  66 |            66 |       66 | uk,co,theregister)
+  66 |            66 |       66 | mx,com,tripadvisor)
+  66 |            66 |       66 | com,epicsports,football)
+  66 |            66 |       66 | com,beau-coup)
+  65 |            65 |       65 | com,healthgrades)
+  65 |            65 |       65 | com,sporcle)
+  65 |            65 |       65 | org,wikipedia,pl)
+  66 |            66 |       65 | com,bonhams)
+  63 |            63 |       63 | org,wikidata)
+  63 |            63 |       63 | com,causes)
+  68 |            68 |       63 | com,ihg)
+  63 |            63 |       63 | com,cricketarchive)
+  66 |            66 |       63 | org,marylandpublicschools)
+  63 |            63 |       63 | com,nadaguides)
+  63 |            63 |       62 | com,eventbrite)
+  62 |            62 |       62 | com,imdb)
+  62 |            62 |       62 | net,mangareader)
+  62 |            62 |       62 | org,wikipedia,de)
+  62 |            62 |       62 | com,beatport)
+  74 |            74 |       61 | com,sqlblog)
+  60 |            60 |       60 | com,bleacherreport)
+  60 |            60 |       60 | eg,com,tripadvisor)
+  60 |            60 |       60 | com,tv)
+  59 |            59 |       59 | com,forbes)
+  67 |            67 |       59 | com,salisburypost)
+  59 |            59 |       59 | com,wsj)
+  59 |            59 |       59 | com,alibaba)
+  59 |            59 |       59 | net,worldcosplay)
+  58 |            58 |       58 | com,go,abcnews)
+  58 |            58 |       58 | com,starpulse)
+  58 |            58 |       58 | com,chictopia)
+  58 |            58 |       58 | com,vimeo)
+  58 |            58 |       58 | org,apache,mail-archives)
+  58 |            58 |       58 | com,anghami,play)
+  58 |            58 |       58 | dk,tripadvisor)
+  57 |            57 |       57 | com,newgrounds)
+  57 |            57 |       57 | com,gameboomers)
+  69 |            69 |       57 | com,nordstrom,shop)
+  57 |            57 |       57 | org,phys)
+  78 |            78 |       57 | com,northernsun)
+  65 |            65 |       57 | com,nytimes)
+  56 |            56 |       56 | com,gizmodo)
+  65 |            65 |       55 | com,freecode)
+  58 |            58 |       55 | com,golfsmith)
+  55 |            55 |       55 | com,wwd)
+  55 |            55 |       55 | id,co,tripadvisor)
+  55 |            55 |       55 | com,scribdassets,imgv2-3)
+  76 |            76 |       55 | com,splitcoaststampers)
+  58 |            58 |       55 | com,iherb)
+  55 |            55 |       55 | se,tripadvisor)
+  54 |            54 |       54 | com,mountainproject)
+  54 |            54 |       54 | com,jezebel)
+  54 |            54 |       54 | com,huffingtonpost)
+(100 rows)
        ```
 
 1. Take a screenshot of an interesting search result.
    Ensure that the timer on the bottom of the webpage is included in the screenshot.
    Add the screenshot to your git repo, and modify the `<img>` tag below to point to the screenshot.
 
-   <img src='screenshot.png' />
+   <img src='SearchEngineScreenshot.PNG' />
 
 1. Commit and push your changes to github.
 

@@ -659,6 +659,9 @@ CREATE MATERIALIZED VIEW metahtml_rollup_insert AS (
     GROUP BY insert_hour
 );
 
+CREATE INDEX metahtml_title_rum_idx ON metahtml USING rum(title);
+CREATE INDEX metahtml_content_rum_idx ON metahtml USING rum(content);
+
 COMMIT;
 
 
